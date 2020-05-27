@@ -1,0 +1,40 @@
+﻿@page "/"
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Data
+@using BlazorWASAM_Multi_Column.Shared;
+@inject HttpClient Http
+
+<h1>Multi-column ComboBox!</h1>
+
+Welcome to your new app.
+
+<div id="ControlRegion">
+    <div class="control-section col-lg-12">
+        <div id="remote-data" class="col-lg-6">
+            <div class="content">
+                <SfComboBox TValue="string" TItem="Product" PopupWidth="700px" DataSource="@_productsList" PopupHeight="400px" CssClass="e-multi-column" Placeholder="Select a Product">
+                    <ComboBoxTemplates TItem="Product">
+                        <HeaderTemplate>
+                            <table><tr><th class="e-text-center">Product ID</th><th width="240px">Product Name</th><th>Unit Price</th><th>Units In Stock</th><th>Units On Order</th></tr></table>
+                        </HeaderTemplate>
+                        <ItemTemplate>
+                            <table><tbody><tr><td class="e-text-center">@((context as Product).ProductID)</td><td width="240px">@((context as Product).ProductName)</td><td>@((context as Product).UnitPrice)</td><td>@((context as Product).UnitsInStock)</td><td>@((context as Product).UnitsOnOrder)</td></tr> </tbody></table>
+                        </ItemTemplate>
+                    </ComboBoxTemplates>
+                    <ComboBoxFieldSettings Text="ProductName" Value="ProductID"></ComboBoxFieldSettings>
+                </SfComboBox>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code{
+
+    private Product[] _productsList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _productsList = await Http.GetFromJsonAsync<Product[]>("Product");
+    }
+}
