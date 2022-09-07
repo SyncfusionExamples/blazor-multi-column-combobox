@@ -13,7 +13,7 @@ Welcome to your new app.
     <div class="control-section col-lg-12">
         <div id="remote-data" class="col-lg-6">
             <div class="content">
-                <SfComboBox TValue="string" TItem="Product" PopupWidth="700px" DataSource="@_productsList" PopupHeight="400px" CssClass="e-multi-column" Placeholder="Select a Product">
+                <SfComboBox @ref="selectProduct" TValue="string" TItem="Product" PopupWidth="700px" DataSource="@_productsList" PopupHeight="400px" CssClass="e-multi-column" Placeholder="Select a Product" AllowFiltering="true">
                     <ComboBoxTemplates TItem="Product">
                         <HeaderTemplate>
                             <table><tr><th class="e-text-center">Product ID</th><th width="240px">Product Name</th><th>Unit Price</th><th>Units In Stock</th><th>Units On Order</th></tr></table>
@@ -23,6 +23,7 @@ Welcome to your new app.
                         </ItemTemplate>
                     </ComboBoxTemplates>
                     <ComboBoxFieldSettings Text="ProductName" Value="ProductID"></ComboBoxFieldSettings>
+                    <ComboBoxEvents TValue="string" TItem="Product" Filtering="OnFiltering"></ComboBoxEvents>
                 </SfComboBox>
             </div>
         </div>
@@ -31,10 +32,30 @@ Welcome to your new app.
 
 @code{
 
+    SfComboBox<string, Product> selectProduct;
+
     private Product[] _productsList;
 
     protected override async Task OnInitializedAsync()
     {
         _productsList = await Http.GetFromJsonAsync<Product[]>("Product");
     }
+    // Filter event
+    private async Task OnFiltering(FilteringEventArgs args)
+    {
+        //Prevent the default filtering action and make custom seacrh.
+        args.PreventDefaultAction = true;
+        var CustomSearch = new WhereFilter();
+        var predicate = new List<WhereFilter>();
+        // Add multiple predicate and make filter action in multiple columns.
+        predicate.Add(new WhereFilter() { Condition = "or", Field = "ProductName", value = args.Text, Operator = "contains", IgnoreCase = true });
+        predicate.Add(new WhereFilter() { Condition = "or", Field = "UnitPrice", value = args.Text, Operator = "contains", IgnoreCase = true });
+        predicate.Add(new WhereFilter() { Condition = "or", Field = "UnitsInStock", value = args.Text, Operator = "contains", IgnoreCase = true });
+        predicate.Add(new WhereFilter() { Condition = "or", Field = "UnitsOnOrder", value = args.Text, Operator = "contains", IgnoreCase = true });
+        CustomSearch = WhereFilter.Or(predicate);
+        var query = new Query().Where(CustomSearch);
+        // call the FilterAsync public method and pass the data source and modified query.
+        await selectProduct.FilterAsync(_productsList, query);
+    }
+
 }
