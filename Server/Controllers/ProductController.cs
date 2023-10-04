@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using BlazorWASAM_Multi_Column.Shared;
+using MultiColumnComboBoxSample.Shared;
 
-namespace BlazorWASAM_Multi_Column.Server.Controllers
+namespace MultiColumnComboBoxSample.Server.Controllers
 {
     [Route("[controller]")]
     [ApiController]
