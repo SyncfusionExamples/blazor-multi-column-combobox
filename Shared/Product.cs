@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BlazorWASAM_Multi_Column.Shared
+namespace MultiColumnComboBoxSample.Shared
 {
     public class Product
     {
